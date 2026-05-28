@@ -1,12 +1,32 @@
+:root {
+  --bg: #eef4fb;
+  --surface: rgba(255, 255, 255, 0.84);
+  --surface-soft: rgba(255, 255, 255, 0.68);
+  --border: rgba(15, 23, 42, 0.08);
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #2563eb;
+  --primary-2: #14b8a6;
+  --warning: #d97706;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
+  --shadow-strong: 0 24px 60px rgba(15, 23, 42, 0.14);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   min-height: 100%;
 }
@@ -14,11 +34,11 @@ html, body {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(13, 110, 253, 0.18), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.16), transparent 24%),
-    linear-gradient(135deg, #0f172a, #111827 55%, #0b1220);
-  color: #e5e7eb;
-  padding: 16px;
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.14), transparent 26%),
+    linear-gradient(135deg, #edf4ff 0%, #f8fbff 45%, #f3f7fb 100%);
+  color: var(--text);
+  padding: 18px;
   overflow-x: hidden;
 }
 
@@ -29,13 +49,14 @@ body {
 }
 
 .card {
-  background: rgba(17, 24, 39, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--border);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-radius: 22px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-strong);
   padding: 20px;
+  min-width: 0;
 }
 
 .topbar {
@@ -45,20 +66,22 @@ body {
   align-items: center;
   margin-bottom: 18px;
   padding: 18px 20px;
-  border-radius: 20px;
-  background: rgba(17, 24, 39, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
 }
 
 .topbar h1 {
   font-size: 28px;
   margin-bottom: 4px;
-  color: #fff;
+  color: var(--text);
+  letter-spacing: -0.03em;
 }
 
 .topbar p {
-  color: #cbd5e1;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -72,9 +95,10 @@ body {
   text-decoration: none;
   color: #fff;
   padding: 10px 14px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #2563eb, #14b8a6);
-  font-weight: 700;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
 }
 
 .mode-switch {
@@ -85,17 +109,25 @@ body {
 }
 
 .mode-btn {
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 12px 18px;
   cursor: pointer;
-  font-weight: 700;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.mode-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
 }
 
 .mode-btn.active {
-  background: linear-gradient(135deg, #2563eb, #14b8a6);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  border-color: transparent;
 }
 
 .controls {
@@ -112,19 +144,22 @@ body {
 .field label {
   display: block;
   margin-bottom: 7px;
-  color: #d1d5db;
+  color: #334155;
   font-size: 14px;
+  font-weight: 600;
 }
 
 .field input {
   width: 240px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
   outline: none;
   padding: 12px 14px;
   font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  min-width: 0;
 }
 
 .primary-btn,
@@ -134,16 +169,25 @@ body {
   height: 44px;
   padding: 0 16px;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 800;
   color: #fff;
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #2563eb, #14b8a6);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.16);
 }
 
 .secondary-btn {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-1px);
 }
 
 .field input:focus,
@@ -151,8 +195,9 @@ body {
 tbody input:focus,
 tbody select:focus,
 tbody textarea:focus {
-  border-color: rgba(37, 99, 235, 0.75);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  background: #fff;
 }
 
 .summary-grid {
@@ -163,41 +208,42 @@ tbody textarea:focus {
 }
 
 .summary-box {
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
 }
 
 .summary-box span {
   display: block;
-  color: #cbd5e1;
+  color: var(--muted);
   font-size: 13px;
   margin-bottom: 6px;
 }
 
 .summary-box strong {
   font-size: 24px;
-  color: #fff;
+  color: var(--text);
 }
 
 .message {
   margin-top: 14px;
   padding: 12px 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   font-size: 14px;
+  line-height: 1.45;
 }
 
 .message.success {
-  background: rgba(34, 197, 94, 0.12);
-  color: #bbf7d0;
-  border: 1px solid rgba(34, 197, 94, 0.22);
+  background: rgba(22, 163, 74, 0.10);
+  color: #14532d;
+  border: 1px solid rgba(22, 163, 74, 0.14);
 }
 
 .message.error {
-  background: rgba(239, 68, 68, 0.12);
-  color: #fecaca;
-  border: 1px solid rgba(239, 68, 68, 0.22);
+  background: rgba(220, 38, 38, 0.10);
+  color: #991b1b;
+  border: 1px solid rgba(220, 38, 38, 0.14);
 }
 
 .card-head {
@@ -206,27 +252,30 @@ tbody textarea:focus {
   gap: 12px;
   align-items: center;
   margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .card-head h2 {
   font-size: 20px;
-  color: #fff;
+  color: var(--text);
 }
 
 .history-date-label {
-  color: #cbd5e1;
+  color: var(--muted);
   font-size: 13px;
 }
 
 .card-head input {
   width: 260px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
   outline: none;
   padding: 10px 12px;
   font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  min-width: 0;
 }
 
 .table-wrap {
@@ -241,18 +290,23 @@ table {
 
 thead th {
   text-align: left;
-  color: #cbd5e1;
+  color: var(--muted);
   font-size: 13px;
   padding: 12px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 tbody td {
   padding: 12px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
   font-size: 14px;
-  color: #e5e7eb;
+  color: var(--text);
   vertical-align: top;
+  min-width: 0;
+}
+
+tbody tr:hover {
+  background: rgba(37, 99, 235, 0.03);
 }
 
 tbody input,
@@ -260,23 +314,26 @@ tbody select,
 tbody textarea {
   width: 100%;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
   outline: none;
   padding: 9px 10px;
   font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  min-width: 0;
 }
 
 tbody textarea {
   resize: vertical;
-  min-height: 38px;
+  min-height: 40px;
 }
 
 .row-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .small-btn {
@@ -284,27 +341,32 @@ tbody textarea {
   border-radius: 10px;
   padding: 9px 10px;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 800;
   color: #fff;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.small-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.96;
 }
 
 .save-btn {
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #14b8a6);
 }
 
 .edit-btn {
-  background: #f59e0b;
-  color: #111827;
+  background: linear-gradient(135deg, #f59e0b, #fb7185);
 }
 
 .locked-badge {
   display: inline-block;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(34, 197, 94, 0.15);
-  color: #bbf7d0;
+  background: rgba(22, 163, 74, 0.12);
+  color: #14532d;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .hidden {
@@ -325,6 +387,7 @@ tbody textarea {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 16px;
   }
 
   .topbar h1 {
@@ -333,7 +396,7 @@ tbody textarea {
 
   .card {
     padding: 16px;
-    border-radius: 18px;
+    border-radius: 22px;
   }
 
   .field input,
@@ -360,6 +423,10 @@ tbody textarea {
     align-items: flex-start;
   }
 
+  .card-head > * {
+    width: 100%;
+  }
+
   .table-wrap {
     overflow: visible;
   }
@@ -374,36 +441,88 @@ tbody textarea {
     width: 100%;
   }
 
+  table {
+    min-width: 0;
+  }
+
   thead {
     display: none;
   }
 
   tbody tr {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid var(--border);
+    border-radius: 18px;
     margin-bottom: 12px;
     padding: 10px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 100%;
   }
 
   tbody td {
     border: none;
     padding: 8px 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: center;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   tbody td::before {
     content: attr(data-label);
-    color: #94a3b8;
+    display: block;
+    color: var(--muted);
     font-weight: 700;
     font-size: 12px;
-    flex: 0 0 42%;
+    margin-bottom: 6px;
+    width: 100%;
+  }
+
+  tbody td > * {
+    max-width: 100%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .row-actions {
-    justify-content: flex-end;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .topnav {
+    width: 100%;
+  }
+
+  .topnav a {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .card-head h2 {
+    font-size: 18px;
+  }
+
+  .small-btn,
+  .secondary-btn,
+  .primary-btn,
+  .mode-btn {
+    width: 100%;
+  }
+
+  .control-row {
+    gap: 10px;
+  }
+
+  .summary-box strong {
+    font-size: 22px;
   }
 }
