@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Nesma Al Muheet | Attendance</title>
+  <link rel="stylesheet" href="attendance.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div>
+        <h1>Attendance Management</h1>
+        <p>Mark today's attendance or view attendance history.</p>
+      </div>
+
+      <nav class="topnav">
+        <a href="index.html">Home</a>
+        <a href="employees.html">Employees</a>
+      </nav>
+    </header>
+
+    <section class="mode-switch card">
+      <button id="todayBtn" class="mode-btn active" type="button">Add Today's Attendance</button>
+      <button id="historyBtn" class="mode-btn" type="button">View Attendance History</button>
+    </section>
+
+    <section id="todaySection">
+      <section class="card controls">
+        <div class="control-row">
+          <div class="field">
+            <label for="attendanceDate">Attendance Date</label>
+            <input type="date" id="attendanceDate" />
+          </div>
+
+          <button id="loadTodayBtn" class="primary-btn" type="button">Load Employees</button>
+          <button id="saveAllBtn" class="secondary-btn" type="button">Save All</button>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-box">
+            <span>Present</span>
+            <strong id="presentCount">0</strong>
+          </div>
+          <div class="summary-box">
+            <span>Absent</span>
+            <strong id="absentCount">0</strong>
+          </div>
+          <div class="summary-box">
+            <span>Total Employees</span>
+            <strong id="totalCount">0</strong>
+          </div>
+        </div>
+
+        <div id="message" class="message" style="display:none;"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Today's Attendance Entry</h2>
+          <input type="search" id="searchInput" placeholder="Search employee" />
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Employee</th>
+                <th>Status</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Regular Hrs</th>
+                <th>OT Hrs</th>
+                <th>Remark</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section id="historySection" class="hidden">
+      <section class="card controls">
+        <div class="control-row">
+          <div class="field">
+            <label for="historyDate">Select Date</label>
+            <input type="date" id="historyDate" />
+          </div>
+
+          <button id="loadHistoryBtn" class="primary-btn" type="button">Load History</button>
+        </div>
+
+        <div id="historyMessage" class="message" style="display:none;"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Attendance History</h2>
+          <div class="history-date-label" id="historyDateLabel"></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Employee</th>
+                <th>Status</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Regular Hrs</th>
+                <th>OT Hrs</th>
+                <th>Remark</th>
+              </tr>
+            </thead>
+            <tbody id="savedTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script type="module" src="attendance.js"></script>
+</body>
+</html>
