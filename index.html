@@ -1,67 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Nesma Al Muheet | Dashboard</title>
-  <link rel="stylesheet" href="index.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NESMA Contractings | Login</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <div class="page">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">N</div>
-        <div>
-          <h1>Nesma Al Muheet</h1>
-          <p>Construction Workshop Portal</p>
-        </div>
-      </div>
 
-      <div class="top-actions">
-        <span id="userLabel" class="user-label">Welcome</span>
-        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
-      </div>
-    </header>
+<body class="auth-page">
+    <div class="auth-card">
+        <h1>NESMA Contractings</h1>
+        <p class="muted">Construction Workshop Management Portal</p>
 
-    <main>
-      <section class="section-head card">
-        <div>
-          <p class="eyebrow">Dashboard</p>
-          <h2>Manage employees and attendance from one clean system.</h2>
-          <p class="section-text">
-            This portal is built to reduce manual work and keep your workshop records organized, faster, and easier to manage.
-          </p>
-        </div>
-      </section>
+        <form id="loginForm" class="auth-form">
+            <label for="username">User ID</label>
+            <input type="text" id="username" autocomplete="off" placeholder="admin" />
 
-      <section class="grid">
-        <a class="feature-card" href="employees.html">
-          <div class="feature-icon">👥</div>
-          <h3>Employee Management</h3>
-          <p>Add, edit, delete, and view employee details.</p>
-        </a>
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="admin" />
 
-        <a class="feature-card" href="attendance.html">
-          <div class="feature-icon">📋</div>
-          <h3>Attendance Management</h3>
-          <p>Mark attendance and view saved records by date.</p>
-        </a>
+            <button type="submit" class="primary-btn">Login</button>
+            <p id="loginMsg" class="msg"></p>
+        </form>
+    </div>
 
-        <div class="feature-card disabled">
-          <div class="feature-icon">💰</div>
-          <h3>Salary / Payroll</h3>
-          <p>Can be added next after attendance is stable.</p>
-        </div>
-
-        <div class="feature-card disabled">
-          <div class="feature-icon">📊</div>
-          <h3>Reports</h3>
-          <p>Future module for exports and summaries.</p>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script src="index.js"></script>
+    <script src="login.js"></script>
 </body>
+
 </html>
