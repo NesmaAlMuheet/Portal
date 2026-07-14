@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NESMA Contractings | Home</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <header class="topbar">
+        <div>
+            <h2>NESMA Contractings</h2>
+            <p class="muted">Dashboard</p>
+        </div>
+        <button class="secondary-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="container">
+        <section class="cards-grid">
+            <a class="feature-card active-card" href="attendance.html">
+                <div class="card-icon">🕒</div>
+                <h3>Attendance Management</h3>
+                <p>Mark employee start and absent status, and save timestamps in Firebase.</p>
+            </a>
+
+            <a class="feature-card coming-soon" href="inventory.html">
+                <div class="card-icon">📦</div>
+                <h3>Inventory Management</h3>
+                <p>Coming soon. Track workshop materials and stock levels.</p>
+            </a>
+
+            <a class="feature-card coming-soon" href="salary.html">
+                <div class="card-icon">💰</div>
+                <h3>Salary Management</h3>
+                <p>Coming soon. Manage payroll and monthly salary details.</p>
+            </a>
+        </section>
+    </main>
+
+    <script>
+        if (sessionStorage.getItem("nesmaLoggedIn") !== "true") {
+            window.location.href = "index.html";
+        }
+
+        function logout() {
+            sessionStorage.removeItem("nesmaLoggedIn");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+
+</html>
