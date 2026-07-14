@@ -1,128 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Nesma Al Muheet | Attendance</title>
-  <link rel="stylesheet" href="attendance.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NESMA Contractings | Attendance</title>
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
-  <div class="page">
-    <header class="topbar">
-      <div>
-        <h1>Attendance Management</h1>
-        <p>Mark today's attendance or view attendance history.</p>
-      </div>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand-block">
+                <div class="brand-mark">NS</div>
+                <div>
+                    <h1>Attendance Management</h1>
+                    <p class="muted">NESMA Contractings</p>
+                </div>
+            </div>
 
-      <nav class="topnav">
-        <a href="index.html">Home</a>
-        <a href="employees.html">Employees</a>
-      </nav>
-    </header>
+            <div class="header-actions">
+                <div class="date-chip" id="todayLabel">Today</div>
+                <a class="secondary-btn" href="home.html">Back</a>
+                <button class="secondary-btn" onclick="logout()">Logout</button>
+            </div>
+        </header>
 
-    <section class="mode-switch card">
-      <button id="todayBtn" class="mode-btn active" type="button">Add Today's Attendance</button>
-      <button id="historyBtn" class="mode-btn" type="button">View Attendance History</button>
-    </section>
+        <main class="container">
+            <section class="hero-card">
+                <div>
+                    <p class="eyebrow">Daily Workforce Check-in</p>
+                    <h2>Employee Attendance Dashboard</h2>
+                    <p class="muted">
+                        Open any employee to see today’s record, mark Start, Overtime Start, or Shift End, and review
+                        the full activity timeline.
+                    </p>
+                </div>
 
-    <section id="todaySection">
-      <section class="card controls">
-        <div class="control-row">
-          <div class="field">
-            <label for="attendanceDate">Attendance Date</label>
-            <input type="date" id="attendanceDate" />
-          </div>
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Total Employees</span>
+                        <strong id="totalEmployees">0</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Marked Today</span>
+                        <strong id="markedToday">0</strong>
+                    </div>
+                </div>
+            </section>
 
-          <button id="loadTodayBtn" class="primary-btn" type="button">Load Employees</button>
-          <button id="saveAllBtn" class="secondary-btn" type="button">Save All</button>
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <h3>Employee List</h3>
+                        <p class="muted">Click the attendance button to open the employee’s daily record.</p>
+                    </div>
+                    <div class="legend">
+                        <span class="legend-item"><i class="dot dot-neutral"></i> Not marked</span>
+                        <span class="legend-item"><i class="dot dot-good"></i> Started</span>
+                        <span class="legend-item"><i class="dot dot-warning"></i> Overtime</span>
+                        <span class="legend-item"><i class="dot dot-danger"></i> Shift ended</span>
+                    </div>
+                </div>
+
+                <div id="employeeList" class="employee-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="attendanceModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()" aria-label="Close modal">×</button>
+
+            <div class="modal-header">
+                <div>
+                    <p class="modal-kicker">Employee Attendance Detail</p>
+                    <h3 id="modalEmployeeName">Employee</h3>
+                    <p class="muted" id="modalEmployeeId">ID</p>
+                </div>
+                <div class="status-pill" id="modalStatusPill">Not marked</div>
+            </div>
+
+            <div class="modal-layout">
+                <section class="modal-left">
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <span>Current Status</span>
+                            <strong id="currentStatusText">Not marked</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>First Marked</span>
+                            <strong id="firstMarkedText">—</strong>
+                        </div>
+                        <div class="summary-card">
+                            <span>Last Activity</span>
+                            <strong id="lastActivityText">—</strong>
+                        </div>
+                    </div>
+
+                    <div class="action-group">
+                        <button class="action-btn start-btn" id="startBtn" onclick="markStart()">Start</button>
+                        <button class="action-btn overtime-btn" id="overtimeBtn" onclick="markOvertimeStart()">Overtime
+                            Start</button>
+                        <button class="action-btn end-btn" id="endBtn" onclick="markShiftEnd()">Shift End</button>
+                        <button class="action-btn absent-btn" id="absentBtn" onclick="markAbsent()">Absent</button>
+                    </div>
+
+                    <div class="status-box-wrap">
+                        <label for="statusBox">Live Status</label>
+                        <textarea id="statusBox" readonly></textarea>
+                    </div>
+                </section>
+
+                <section class="modal-right">
+                    <div class="timeline-head">
+                        <h4>Today’s Timeline</h4>
+                        <p class="muted">Chronological record for this employee on the selected date.</p>
+                    </div>
+
+                    <div id="timelineList" class="timeline-list"></div>
+                </section>
+            </div>
         </div>
+    </div>
 
-        <div class="summary-grid">
-          <div class="summary-box">
-            <span>Present</span>
-            <strong id="presentCount">0</strong>
-          </div>
-          <div class="summary-box">
-            <span>Absent</span>
-            <strong id="absentCount">0</strong>
-          </div>
-          <div class="summary-box">
-            <span>Total Employees</span>
-            <strong id="totalCount">0</strong>
-          </div>
+    <div id="toast" class="toast hidden"></div>
+    <!-- Processing Loader -->
+    <div id="processingLoader" class="loader-overlay hidden">
+        <div class="loader-box">
+            <div class="loader-spinner"></div>
+            <p>Processing...</p>
         </div>
-
-        <div id="message" class="message" style="display:none;"></div>
-      </section>
-
-      <section class="card">
-        <div class="card-head">
-          <h2>Today's Attendance Entry</h2>
-          <input type="search" id="searchInput" placeholder="Search employee" />
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Employee</th>
-                <th>Status</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Regular Hrs</th>
-                <th>OT Hrs</th>
-                <th>Remark</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="attendanceTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-
-    <section id="historySection" class="hidden">
-      <section class="card controls">
-        <div class="control-row">
-          <div class="field">
-            <label for="historyDate">Select Date</label>
-            <input type="date" id="historyDate" />
-          </div>
-
-          <button id="loadHistoryBtn" class="primary-btn" type="button">Load History</button>
-        </div>
-
-        <div id="historyMessage" class="message" style="display:none;"></div>
-      </section>
-
-      <section class="card">
-        <div class="card-head">
-          <h2>Attendance History</h2>
-          <div class="history-date-label" id="historyDateLabel"></div>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Employee</th>
-                <th>Status</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Regular Hrs</th>
-                <th>OT Hrs</th>
-                <th>Remark</th>
-              </tr>
-            </thead>
-            <tbody id="savedTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-  </div>
-
-  <script type="module" src="attendance.js"></script>
+    </div>
+    <script src="attendance.js"></script>
 </body>
+
 </html>
