@@ -10,6 +10,9 @@
     <!-- Firebase Compat SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <!-- Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -25,6 +28,7 @@
 
             <div class="header-actions">
                 <div class="date-chip" id="todayLabel">Today</div>
+                <button class="secondary-btn" onclick="openReportModal()">Download Report</button>
                 <a class="secondary-btn" href="home.html">Back</a>
                 <button class="secondary-btn" onclick="logout()">Logout</button>
             </div>
@@ -72,7 +76,7 @@
         </main>
     </div>
 
-    <!-- Modal -->
+    <!-- Attendance Modal -->
     <div id="attendanceModal" class="modal hidden" aria-hidden="true">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()" aria-label="Close modal">×</button>
@@ -105,8 +109,7 @@
 
                     <div class="action-group">
                         <button class="action-btn start-btn" id="startBtn" onclick="markStart()">Start</button>
-                        <button class="action-btn overtime-btn" id="overtimeBtn" onclick="markOvertimeStart()">Overtime
-                            Start</button>
+                        <button class="action-btn overtime-btn" id="overtimeBtn" onclick="markOvertimeStart()">Overtime Start</button>
                         <button class="action-btn end-btn" id="endBtn" onclick="markShiftEnd()">Shift End</button>
                         <button class="action-btn absent-btn" id="absentBtn" onclick="markAbsent()">Absent</button>
                     </div>
@@ -129,7 +132,47 @@
         </div>
     </div>
 
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeReportModal()" aria-label="Close report modal">×</button>
+
+            <div class="modal-header">
+                <div>
+                    <p class="modal-kicker">Attendance Report</p>
+                    <h3>Download Excel Report</h3>
+                    <p class="muted">Choose a date range. The report range cannot exceed 31 days.</p>
+                </div>
+            </div>
+
+            <div class="summary-grid" style="margin-top: 16px;">
+                <div class="summary-card">
+                    <span>Start Date</span>
+                    <input id="reportStartDate" type="date" />
+                </div>
+                <div class="summary-card">
+                    <span>End Date</span>
+                    <input id="reportEndDate" type="date" />
+                </div>
+            </div>
+
+            <div class="status-box-wrap" style="margin-top: 16px;">
+                <label>Report Rules</label>
+                <textarea readonly>• Start and end date are required.
+• The total range must not exceed 31 days.
+• The report includes all current employees.
+• A daily sheet and summary sheet will be exported.</textarea>
+            </div>
+
+            <div class="action-group" style="margin-top: 16px;">
+                <button class="action-btn start-btn" type="button" onclick="downloadReport()">Download Excel</button>
+                <button class="action-btn absent-btn" type="button" onclick="closeReportModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast hidden"></div>
+
     <!-- Processing Loader -->
     <div id="processingLoader" class="loader-overlay hidden">
         <div class="loader-box">
@@ -137,6 +180,7 @@
             <p>Processing...</p>
         </div>
     </div>
+
     <script src="attendance.js"></script>
 </body>
 
