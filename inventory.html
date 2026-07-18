@@ -1,28 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NESMA Contractings | Inventory</title>
-    <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NESMA Contractings | Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+   <link rel="stylesheet" href="inventory.css" />
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
-    <header class="topbar">
+  <header class="topbar">
+    <div>
+      <h2>Inventory Management</h2>
+      <p class="muted">Manage materials, quantities, and stock levels</p>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="primary-btn" type="button" onclick="openAddItemModal()">Add new item</button>
+      <button class="secondary-btn" type="button" onclick="scrollToInventory()">View existing item</button>
+      <a class="secondary-btn" href="home.html">Back</a>
+    </div>
+  </header>
+
+  <main class="container inventory-shell">
+    <section class="panel">
+      <div class="inventory-toolbar">
         <div>
-            <h2>Inventory Management</h2>
-            <p class="muted">Coming soon</p>
+          <h3>Inventory Overview</h3>
+          <p class="muted">All items are stored in Firestore under the <strong>inventory</strong> collection.</p>
         </div>
-        <a class="secondary-btn" href="home.html">Back</a>
-    </header>
 
-    <main class="container">
-        <section class="panel center-panel">
-            <h3>Inventory Management is in progress</h3>
-            <p class="muted">This section will be added next.</p>
-        </section>
-    </main>
+        <input id="searchInput" class="search-bar" type="search" placeholder="Search by name or category..." />
+      </div>
+
+      <div class="stats-row" style="margin-top: 16px;">
+        <div class="stat-box">
+          <span>Total Items</span>
+          <strong id="totalItems">0</strong>
+        </div>
+        <div class="stat-box">
+          <span>Total Quantity</span>
+          <strong id="totalQuantity">0</strong>
+        </div>
+        <div class="stat-box">
+          <span>Categories Used</span>
+          <strong id="totalCategories">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="inventorySection" class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Existing Items</h3>
+          <p class="muted">View all items, check quantities, and adjust stock.</p>
+        </div>
+      </div>
+
+      <div id="inventoryList" class="inventory-grid"></div>
+    </section>
+  </main>
+
+  <!-- Add Item Modal -->
+  <div id="itemModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close-btn" type="button" onclick="closeItemModal()" aria-label="Close">×</button>
+
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">Inventory Item</p>
+          <h3>Add New Item</h3>
+          <p class="muted">Fill the item details and save to Firestore.</p>
+        </div>
+      </div>
+
+      <form id="itemForm">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="itemName">Item name *</label>
+            <input id="itemName" type="text" placeholder="Enter item name" />
+          </div>
+
+          <div class="field">
+            <label for="itemLength">Item length</label>
+            <div class="inline-two">
+              <input id="itemLength" type="number" step="any" min="0" placeholder="Length" />
+              <select id="lengthUnit">
+                <option value="">Unit</option>
+                <option value="mm">mm</option>
+                <option value="m">m</option>
+                <option value="inch">inch</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="itemWidth">Item width</label>
+            <div class="inline-two">
+              <input id="itemWidth" type="number" step="any" min="0" placeholder="Width" />
+              <select id="widthUnit">
+                <option value="">Unit</option>
+                <option value="mm">mm</option>
+                <option value="m">m</option>
+                <option value="inch">inch</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="itemHeight">Item height</label>
+            <div class="inline-two">
+              <input id="itemHeight" type="number" step="any" min="0" placeholder="Height" />
+              <select id="heightUnit">
+                <option value="">Unit</option>
+                <option value="mm">mm</option>
+                <option value="m">m</option>
+                <option value="inch">inch</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="itemDiameter">Item diameter</label>
+            <div class="inline-two">
+              <input id="itemDiameter" type="number" step="any" min="0" placeholder="Diameter" />
+              <select id="diameterUnit">
+                <option value="">Unit</option>
+                <option value="mm">mm</option>
+                <option value="m">m</option>
+                <option value="inch">inch</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label for="itemCategory">Item category</label>
+            <select id="itemCategory">
+              <option value="">Select category</option>
+              <option value="angles">angles</option>
+              <option value="tube">tube</option>
+              <option value="flat bar">flat bar</option>
+              <option value="beam">beam</option>
+              <option value="i beam">i beam</option>
+              <option value="channel">channel</option>
+              <option value="pipe">pipe</option>
+              <option value="greating">greating</option>
+              <option value="paint & welding rod">paint & welding rod</option>
+              <option value="rod mabroom">rod mabroom</option>
+              <option value="rebar">rebar</option>
+              <option value="sheet sulay">sheet sulay</option>
+              <option value="sheet naseem">sheet naseem</option>
+              <option value="black sheet">black sheet</option>
+              <option value="elbow">elbow</option>
+              <option value="anchor bolt and nuts">anchor bolt and nuts</option>
+              <option value="fence material">fence material</option>
+              <option value="welding rod">welding rod</option>
+              <option value="checker plate naseem">checker plate naseem</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="itemQuantity">Item quantity *</label>
+            <input id="itemQuantity" type="number" min="1" step="1" placeholder="Enter quantity greater than 0" />
+          </div>
+        </div>
+
+        <div class="row-divider"></div>
+
+        <div class="inline-actions">
+          <button class="primary-btn" type="submit">Save item</button>
+          <button class="secondary-btn" type="button" onclick="closeItemModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Missing Dimensions Confirmation -->
+  <div id="confirmModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content small">
+      <button class="close-btn" type="button" onclick="closeConfirmModal()" aria-label="Close">×</button>
+
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">Confirmation</p>
+          <h3>Save without some dimensions?</h3>
+          <p class="muted">One or more dimension fields are empty. Do you want to continue saving this item?</p>
+        </div>
+      </div>
+
+      <div class="inline-actions" style="margin-top: 18px;">
+        <button class="primary-btn" type="button" onclick="confirmMissingDimensions()">Yes, save it</button>
+        <button class="secondary-btn" type="button" onclick="closeConfirmModal()">Go back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quantity Modal -->
+  <div id="qtyModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content small">
+      <button class="close-btn" type="button" onclick="closeQtyModal()" aria-label="Close">×</button>
+
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">Stock Update</p>
+          <h3 id="qtyModalTitle">Edit Quantity</h3>
+          <p class="muted" id="qtyModalSubtitle">Add or subtract stock for this item.</p>
+        </div>
+      </div>
+
+      <div class="summary-grid" style="margin-top: 18px;">
+        <div class="summary-card">
+          <span>Current Quantity</span>
+          <strong id="currentQtyText">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Change Amount</span>
+          <input id="qtyDelta" type="number" min="1" step="1" value="1" />
+        </div>
+      </div>
+
+      <div class="inline-actions" style="margin-top: 16px;">
+        <button class="primary-btn" type="button" onclick="applyQuantityChange('add')">Add Quantity</button>
+        <button class="danger-btn" type="button" onclick="applyQuantityChange('subtract')">Subtract Quantity</button>
+        <button class="secondary-btn" type="button" onclick="closeQtyModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="processingLoader" class="loader-overlay hidden">
+    <div class="loader-box">
+      <div class="loader-spinner"></div>
+      <p>Processing...</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="inventory.js"></script>
 </body>
-
 </html>
