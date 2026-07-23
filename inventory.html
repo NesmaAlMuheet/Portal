@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NESMA Contractings | Inventory</title>
+
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="inventory.css" />
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -23,220 +21,183 @@
       <p class="muted">Manage materials, quantities, and stock levels</p>
     </div>
 
-```
-<div class="topbar-actions">
-  <button class="primary-btn" type="button" onclick="openAddItemModal()">Add new item</button>
-  <button class="secondary-btn" type="button" onclick="openDownloadModal()">Download stock</button>
-  <button class="secondary-btn" type="button" onclick="scrollToInventory()">View existing item</button>
-  <a class="secondary-btn" href="home.html">Back</a>
-</div>
-```
-
+    <div class="topbar-actions">
+      <button class="primary-btn small-btn" type="button" onclick="openAddItemModal()">Add new item</button>
+      <button class="secondary-btn small-btn" type="button" onclick="openDownloadModal()">Download stock</button>
+      <button class="secondary-btn small-btn" type="button" onclick="scrollToInventory()">View items</button>
+      <a class="secondary-btn small-btn" href="home.html" style="color: black;">Back</a>
+    </div>
   </header>
 
   <main class="container inventory-shell">
-    <section class="panel">
+    <section class="panel hero-panel">
       <div class="inventory-toolbar">
         <div>
           <h3>Inventory Overview</h3>
-          <p class="muted">All items are stored in Firestore under the <strong>inventory</strong> collection.</p>
         </div>
 
-```
-    <input
-      id="searchInput"
-      class="search-bar"
-      type="search"
-      placeholder="Search by name, size or category..."
-    />
-  </div>
-</section>
+        <input
+          id="searchInput"
+          class="search-bar"
+          type="search"
+          placeholder="Search by name, size or category..."
+        />
+      </div>
 
-<section id="inventorySection" class="panel">
-  <div class="panel-head">
-    <div>
-      <h3>Existing Items</h3>
-      <p class="muted">View all items, check quantities, and adjust stock.</p>
-    </div>
-  </div>
+      <div id="inventoryStats" class="stats-grid"></div>
+    </section>
 
-  <div id="inventoryList" class="inventory-grid"></div>
-</section>
-```
+    <section id="inventorySection" class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Existing Items</h3>
+          <p class="muted">Compact cards with edit, delete, and quick stock controls.</p>
+        </div>
+      </div>
 
+      <div id="inventoryList" class="inventory-grid"></div>
+    </section>
   </main>
 
-  <!-- Add Item Modal -->
-
+  <!-- Add / Edit Item Modal -->
   <div id="itemModal" class="modal hidden" aria-hidden="true">
     <div class="modal-content">
       <button class="close-btn" type="button" onclick="closeItemModal()" aria-label="Close">×</button>
 
-```
-  <div class="modal-header">
-    <div>
-      <p class="modal-kicker">Inventory Item</p>
-      <h3>Add New Item</h3>
-      <p class="muted">Fill the item details and save to Firestore.</p>
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">Inventory Item</p>
+          <h3 id="itemModalTitle">Add New Item</h3>
+          <p class="muted" id="itemModalSubtitle">Fill the item details and save to Firestore.</p>
+        </div>
+      </div>
+
+      <form id="itemForm">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="itemName">Item name *</label>
+            <input id="itemName" type="text" placeholder="Enter item name" />
+          </div>
+
+          <div class="field full">
+            <label for="itemSize">Size *</label>
+            <input id="itemSize" type="text" placeholder="Example: 50 x 50 x 6 mm" />
+          </div>
+
+          <div class="field">
+            <label for="itemWeight">Weight per piece *</label>
+            <input id="itemWeight" type="number" step="any" min="0" placeholder="Enter weight per piece" />
+          </div>
+
+          <div class="field">
+            <label for="itemCost">Cost per piece *</label>
+            <input id="itemCost" type="number" step="any" min="0" placeholder="Enter cost per piece" />
+          </div>
+
+          <div class="field full" id="itemCategoryField">
+            <label for="itemCategory">Item category</label>
+            <select id="itemCategory">
+              <option value="">Select category</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="itemQuantity">Item quantity *</label>
+            <input id="itemQuantity" type="number" min="1" step="1" placeholder="Enter quantity" />
+          </div>
+        </div>
+
+        <div class="row-divider"></div>
+
+        <div class="inline-actions">
+          <button id="itemSaveBtn" class="primary-btn" type="submit">Save item</button>
+          <button class="secondary-btn" type="button" onclick="closeItemModal()">Cancel</button>
+        </div>
+      </form>
     </div>
-  </div>
-
-  <form id="itemForm">
-    <div class="form-grid">
-      <div class="field full">
-        <label for="itemName">Item name *</label>
-        <input id="itemName" type="text" placeholder="Enter item name" />
-      </div>
-
-      <div class="field full">
-        <label for="itemSize">Size *</label>
-        <input id="itemSize" type="text" placeholder="Example: 50 x 50 x 6 mm" />
-      </div>
-
-      <div class="field">
-        <label for="itemWeight">Weight per piece *</label>
-        <input id="itemWeight" type="number" step="any" min="0" placeholder="Enter weight per piece" />
-      </div>
-
-      <div class="field">
-        <label for="itemCost">Cost per piece *</label>
-        <input id="itemCost" type="number" step="any" min="0" placeholder="Enter cost per piece" />
-      </div>
-
-      <div class="field full">
-        <label for="itemCategory">Item category</label>
-        <select id="itemCategory">
-          <option value="">Select category</option>
-          <option value="angles">angles</option>
-          <option value="tube">tube</option>
-          <option value="flat bar">flat bar</option>
-          <option value="beam">beam</option>
-          <option value="i beam">i beam</option>
-          <option value="channel">channel</option>
-          <option value="pipe">pipe</option>
-          <option value="greating">greating</option>
-          <option value="paint & welding rod">paint & welding rod</option>
-          <option value="rod mabroom">rod mabroom</option>
-          <option value="rebar">rebar</option>
-          <option value="sheet sulay">sheet sulay</option>
-          <option value="sheet naseem">sheet naseem</option>
-          <option value="black sheet">black sheet</option>
-          <option value="elbow">elbow</option>
-          <option value="anchor bolt and nuts">anchor bolt and nuts</option>
-          <option value="fence material">fence material</option>
-          <option value="welding rod">welding rod</option>
-          <option value="checker plate naseem">checker plate naseem</option>
-        </select>
-      </div>
-
-      <div class="field full">
-        <label for="itemQuantity">Item quantity *</label>
-        <input id="itemQuantity" type="number" min="1" step="1" placeholder="Enter quantity greater than 0" />
-      </div>
-    </div>
-
-    <div class="row-divider"></div>
-
-    <div class="inline-actions">
-      <button class="primary-btn" type="submit">Save item</button>
-      <button class="secondary-btn" type="button" onclick="closeItemModal()">Cancel</button>
-    </div>
-  </form>
-</div>
-```
-
   </div>
 
   <!-- Download Stock Modal -->
-
   <div id="downloadModal" class="modal hidden" aria-hidden="true">
     <div class="modal-content small">
       <button class="close-btn" type="button" onclick="closeDownloadModal()" aria-label="Close">×</button>
 
-```
-  <div class="modal-header">
-    <div>
-      <p class="modal-kicker">Export</p>
-      <h3>Download Stock Report</h3>
-      <p class="muted">Choose a category to export all products and their stock logs into Excel.</p>
-    </div>
-  </div>
-
-  <form id="downloadForm">
-    <div class="form-grid" style="margin-top: 16px;">
-      <div class="field full">
-        <label for="downloadCategory">Category *</label>
-        <select id="downloadCategory">
-          <option value="">Select category</option>
-          <option value="angles">angles</option>
-          <option value="tube">tube</option>
-          <option value="flat bar">flat bar</option>
-          <option value="beam">beam</option>
-          <option value="i beam">i beam</option>
-          <option value="channel">channel</option>
-          <option value="pipe">pipe</option>
-          <option value="greating">greating</option>
-          <option value="paint & welding rod">paint & welding rod</option>
-          <option value="rod mabroom">rod mabroom</option>
-          <option value="rebar">rebar</option>
-          <option value="sheet sulay">sheet sulay</option>
-          <option value="sheet naseem">sheet naseem</option>
-          <option value="black sheet">black sheet</option>
-          <option value="elbow">elbow</option>
-          <option value="anchor bolt and nuts">anchor bolt and nuts</option>
-          <option value="fence material">fence material</option>
-          <option value="welding rod">welding rod</option>
-          <option value="checker plate naseem">checker plate naseem</option>
-        </select>
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">Export</p>
+          <h3>Download Stock Report</h3>
+          <p class="muted">Export all inventory items into Excel with Product Summary and Stock Logs sheets.</p>
+        </div>
       </div>
+
+      <form id="downloadForm">
+        <div class="row-divider" style="margin-top: 18px;"></div>
+
+        <div class="inline-actions">
+          <button class="primary-btn" type="submit">Download Excel</button>
+          <button class="secondary-btn" type="button" onclick="closeDownloadModal()">Cancel</button>
+        </div>
+      </form>
     </div>
-
-    <div class="row-divider"></div>
-
-    <div class="inline-actions">
-      <button class="primary-btn" type="submit">Download Excel</button>
-      <button class="secondary-btn" type="button" onclick="closeDownloadModal()">Cancel</button>
-    </div>
-  </form>
-</div>
-```
-
   </div>
 
   <!-- Quantity Modal -->
-
   <div id="qtyModal" class="modal hidden" aria-hidden="true">
     <div class="modal-content small">
       <button class="close-btn" type="button" onclick="closeQtyModal()" aria-label="Close">×</button>
 
-```
-  <div class="modal-header">
-    <div>
-      <p class="modal-kicker">Stock Update</p>
-      <h3 id="qtyModalTitle">Edit Quantity</h3>
-      <p class="muted" id="qtyModalSubtitle">Add or subtract stock for this item.</p>
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">Stock Update</p>
+          <h3 id="qtyModalTitle">Edit Quantity</h3>
+          <p class="muted" id="qtyModalSubtitle">Add or subtract stock for this item.</p>
+        </div>
+      </div>
+
+      <div class="summary-grid" style="margin-top: 18px;">
+        <div class="summary-card">
+          <span>Current Quantity</span>
+          <strong id="currentQtyText">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Change Amount</span>
+          <input id="qtyDelta" type="number" min="1" step="1" value="1" />
+        </div>
+      </div>
+
+      <div class="inline-actions" style="margin-top: 16px;">
+        <button class="primary-btn" type="button" onclick="applyQuantityChange('add')">Add Quantity</button>
+        <button class="danger-btn" type="button" onclick="applyQuantityChange('subtract')">Subtract Quantity</button>
+        <button class="secondary-btn" type="button" onclick="closeQtyModal()">Cancel</button>
+      </div>
     </div>
   </div>
 
-  <div class="summary-grid" style="margin-top: 18px;">
-    <div class="summary-card">
-      <span>Current Quantity</span>
-      <strong id="currentQtyText">0</strong>
-    </div>
-    <div class="summary-card">
-      <span>Change Amount</span>
-      <input id="qtyDelta" type="number" min="1" step="1" value="1" />
-    </div>
-  </div>
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteConfirmModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content small">
+      <button class="close-btn" type="button" onclick="closeDeleteConfirm()" aria-label="Close">×</button>
 
-  <div class="inline-actions" style="margin-top: 16px;">
-    <button class="primary-btn" type="button" onclick="applyQuantityChange('add')">Add Quantity</button>
-    <button class="danger-btn" type="button" onclick="applyQuantityChange('subtract')">Subtract Quantity</button>
-    <button class="secondary-btn" type="button" onclick="closeQtyModal()">Cancel</button>
-  </div>
-</div>
-```
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker" style="color: var(--danger);">Delete item</p>
+          <h3>Confirm deletion</h3>
+          <p class="muted" id="deleteConfirmMessage">This will permanently remove the record from Firestore.</p>
+        </div>
+      </div>
 
+      <div class="summary-card" style="margin-top: 8px;">
+        <span>Item</span>
+        <strong id="deleteConfirmName">—</strong>
+      </div>
+
+      <div class="row-divider"></div>
+
+      <div class="inline-actions">
+        <button class="danger-btn" type="button" onclick="confirmDeleteItem()">Delete</button>
+        <button class="secondary-btn" type="button" onclick="closeDeleteConfirm()">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <div id="processingLoader" class="loader-overlay hidden">
@@ -249,6 +210,5 @@
   <div id="toast" class="toast hidden"></div>
 
   <script src="inventory.js"></script>
-
 </body>
 </html>
